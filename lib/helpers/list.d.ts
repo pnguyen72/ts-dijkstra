@@ -24,7 +24,7 @@ export type filterMap<f extends Fn, arr extends unknown[]> = arr extends [
 	...infer tail,
 ]
 	? call<f, head> extends infer result
-		? result extends never
+		? unknown extends result
 			? filterMap<f, tail>
 			: [result, ...filterMap<f, tail>]
 		: never

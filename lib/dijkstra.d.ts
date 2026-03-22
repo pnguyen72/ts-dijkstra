@@ -15,9 +15,9 @@ type updateNeighbor<
 		? plus<current["dist"], weight> extends infer newDist extends number
 			? lt<newDist, neighbor["dist"]> extends true
 				? Vertex.create<name, newDist, current>
-				: never
-			: never
-		: never;
+				: unknown
+			: unknown
+		: unknown;
 
 // @ts-ignore - infinite recursion, but still works if graph is small enough
 interface updateNeighborFn<current extends Vertex.T, unvisited extends Queue.T>
@@ -45,8 +45,8 @@ type search<
 		? List.filterMap<
 				updateNeighborFn<current, newUnvisited>,
 				edges
-			> extends infer neighbours extends Vertex.T[]
-			? neighbours
+			> extends infer vertices extends Vertex.T[]
+			? vertices
 			: []
 		: [],
 	updatedUnvisited extends Queue.T = List.foldRight<

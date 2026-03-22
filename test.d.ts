@@ -7,7 +7,7 @@ type graph = Graph.ofEdges<
 		Graph.edge<"b", "a", 4>,
 		Graph.edge<"c", "b", 6>,
 		Graph.edge<"c", "d", 5>,
-		Graph.edge<"c", "e", 1>,
+		Graph.edge<"c", "e", 2>,
 		Graph.edge<"d", "e", 3>,
 		Graph.edge<"e", "b", 2>,
 		Graph.edge<"e", "f", 1>,
@@ -15,4 +15,4 @@ type graph = Graph.ofEdges<
 	]
 >;
 
-type _path = shortestPath<"a", "f", graph>;
+type _path = shortestPath<"a", "b", graph>;

@@ -3,6 +3,8 @@ type Number<
 	acc extends unknown[] = [],
 > = n extends acc["length"] ? acc : Number<n, [...acc, acc["length"]]>;
 
+export type inf = 999; // largest representable number
+
 export type minus<a extends number, b extends number> =
 	Number<a> extends [...Number<b>, ...infer rest] ? rest["length"] : unknown;
 

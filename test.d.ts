@@ -1,5 +1,5 @@
-import type { shortestPath } from "./dijkstra";
-import type * as Graph from "./graph";
+import type { shortestPath } from "./lib/dijkstra";
+import type * as Graph from "./lib/graph";
 
 type graph = Graph.ofEdges<
 	[
@@ -15,4 +15,4 @@ type graph = Graph.ofEdges<
 	]
 >;
 
-type _path = shortestPath<"a", "b", graph>;
+type _p = shortestPath<"a", "b", graph>;

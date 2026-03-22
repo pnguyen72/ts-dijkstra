@@ -28,4 +28,4 @@ type buildPath<v extends T, acc extends string[] = []> =
 			: [name, ...acc]
 		: never;
 
-export type getPath<v extends T> = { path: buildPath<v>; distance: v["dist"] };
+export type getPath<v extends T> = { path: buildPath<v>; dist: v["dist"] };

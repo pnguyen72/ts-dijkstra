@@ -1,5 +1,5 @@
 import type * as Graph from "./graph";
-import type { lt, plus } from "./helpers/arithmetic";
+import type { inf, lt, plus } from "./helpers/arithmetic";
 import type { Fn } from "./helpers/function";
 import type * as List from "./helpers/list";
 import type * as Vertex from "./vertex";
@@ -19,7 +19,7 @@ type updateNeighbor<
 			: never
 		: never;
 
-// @ts-expect-error - infinite recursion, but still works if graph is small enough
+// @ts-ignore - infinite recursion, but still works if graph is small enough
 interface updateNeighborFn<current extends Vertex.T, unvisited extends Queue.T>
 	extends Fn<Graph.Edge, Vertex.T> {
 	return: updateNeighbor<
@@ -59,17 +59,19 @@ type search<
 		? next["name"] extends des
 			? Vertex.getPath<next>
 			: search<des, g, next, newVisited, updatedUnvisited>
-		: Queue.get<des, newVisited> extends infer desVtx extends Vertex.T
-			? Vertex.getPath<desVtx>
+		: Queue.get<des, newVisited> extends infer desVertex extends Vertex.T
+			? Vertex.getPath<desVertex>
 			: unknown;
 
 export type shortestPath<
 	src extends string,
 	des extends string,
 	g extends Graph.T,
-	firstVertex extends Vertex.T = Vertex.create<src, 0>,
-	initialVisited extends Queue.T = Queue.empty,
-	initialUnvisited extends Queue.T = Queue.ofList<
-		List.map<Vertex.createFn<999>, Graph.vertices<g>>
+	srcVertex extends Vertex.T = Vertex.create<src, 0>,
+	visited extends Queue.T = Queue.empty,
+	unvisited extends Queue.T = Queue.ofList<
+		List.map<Vertex.createFn<inf>, Graph.vertices<g>>
 	>,
-> = search<des, g, firstVertex, initialVisited, initialUnvisited>;
+> = src extends des
+	? { path: [src]; dist: 0 }
+	: search<des, g, srcVertex, visited, unvisited>;

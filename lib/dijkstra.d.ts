@@ -18,7 +18,9 @@ export type shortestPath<
 		? `Vertex ${src} does not exist`
 		: Graph.mem<des, g> extends false
 			? `Vertex ${des} does not exist`
-			: search<src, des, g, srcNode, visited, unvisited>;
+			: src extends des
+				? { path: src; dist: 0 }
+				: search<src, des, g, srcNode, visited, unvisited>;
 
 type search<
 	src extends string,

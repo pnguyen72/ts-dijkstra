@@ -1,16 +1,17 @@
-type Number<
-	n extends number,
+type tupleOf<
+	length extends number,
 	acc extends unknown[] = [],
-> = n extends acc["length"] ? acc : Number<n, [...acc, acc["length"]]>;
+> = length extends acc["length"] ? acc : tupleOf<length, [...acc, 0]>;
 
-export type inf = 999; // largest representable number
+// largest representable number, since 1000 is TS recursion limit
+export type inf = 999;
 
 export type minus<a extends number, b extends number> =
-	Number<a> extends [...Number<b>, ...infer rest] ? rest["length"] : unknown;
+	tupleOf<a> extends [...tupleOf<b>, ...infer rest] ? rest["length"] : unknown;
 
 export type plus<a extends number, b extends number> = [
-	...Number<a>,
-	...Number<b>,
+	...tupleOf<a>,
+	...tupleOf<b>,
 ]["length"];
 
 export type lt<a extends number, b extends number> =

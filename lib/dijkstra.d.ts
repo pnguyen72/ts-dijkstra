@@ -8,19 +8,17 @@ export type shortestPath<
 	src extends string,
 	des extends string,
 	g extends Graph,
-	srcVertex extends Node = Node.of<src, 0>,
+	srcNode extends Node = Node.of<src, 0>,
 	visited extends Queue = Queue.empty,
 	unvisited extends Queue = Queue.ofList<
-		List.map<Node.createFn<inf>, Graph.vertices<g>>
+		List.map<Node.ofDist<inf>, Graph.vertices<g>>
 	>,
 > =
 	Graph.mem<src, g> extends false
 		? `Vertex ${src} does not exist`
 		: Graph.mem<des, g> extends false
 			? `Vertex ${des} does not exist`
-			: src extends des
-				? { path: [src]; dist: 0 }
-				: search<src, des, g, srcVertex, visited, unvisited>;
+			: search<src, des, g, srcNode, visited, unvisited>;
 
 type search<
 	src extends string,
@@ -49,13 +47,13 @@ type search<
 	>,
 > =
 	Queue.min<updatedUnvisited> extends infer next extends Node
-		? next["name"] extends des
-			? Node.isRelaxed<next> extends true
+		? Node.relaxed<next> extends true
+			? next["name"] extends des
 				? Node.getPath<next>
-				: `Vertices ${src} and ${des} are not connected`
-			: search<src, des, g, next, newVisited, updatedUnvisited>
-		: Queue.get<des, newVisited> extends infer desVertex extends Node
-			? Node.getPath<desVertex>
+				: search<src, des, g, next, newVisited, updatedUnvisited>
+			: `Vertices ${src} and ${des} are not connected`
+		: Queue.get<des, newVisited> extends infer desNode extends Node
+			? Node.getPath<desNode>
 			: unknown; // should be unreachable
 
 // @ts-ignore - infinite recursion, but still works if graph is small enough
@@ -91,7 +89,7 @@ declare namespace Node {
 		prev extends Node | null = null,
 	> = { name: name; dist: dist; prev: prev };
 
-	export interface createFn<dist extends number> extends Fn<string, Node> {
+	export interface ofDist<dist extends number> extends Fn<string, Node> {
 		return: of<this["arg"], dist>;
 	}
 
@@ -99,13 +97,16 @@ declare namespace Node {
 		return: lt<this["arg"][0]["dist"], this["arg"][1]["dist"]>;
 	}
 
-	export type isRelaxed<node extends Node> = lt<node["dist"], inf>;
+	export type relaxed<node extends Node> = lt<node["dist"], inf>;
 
-	type buildPath<node extends Node, acc extends string[] = []> =
+	type buildPath<node extends Node, acc extends string = ""> =
 		node extends of<infer name, infer _, infer prev>
-			? prev extends Node
-				? buildPath<prev, [name, ...acc]>
-				: [name, ...acc]
+			? (acc extends "" ? name : `${name} - ${acc}`) extends infer acc extends
+					string
+				? prev extends Node
+					? buildPath<prev, acc>
+					: acc
+				: never
 			: never;
 
 	export type getPath<v extends Node> = { path: buildPath<v>; dist: v["dist"] };

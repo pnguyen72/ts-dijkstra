@@ -6,9 +6,13 @@ export namespace Table {
 	export type empty = object;
 
 	export type insert<k extends PropertyKey, v, t extends Table> = t &
-
 		Record<k, v>;
-	export type update<k extends PropertyKey, v, t extends Table> = insert<k, v, remove<k, t>>;
+
+	export type update<k extends PropertyKey, v, t extends Table> = insert<
+		k,
+		v,
+		remove<k, t>
+	>;
 
 	export type remove<k extends PropertyKey, t extends Table> = Omit<t, k>;
 

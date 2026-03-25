@@ -76,4 +76,4 @@ type graph = Graph.of<
 	]
 >;
 
-type _ = shortestPath<"Z", "K", graph>;
+type _ = shortestPath<"Z", "W", graph>;

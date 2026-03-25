@@ -55,10 +55,10 @@ type search<
 				: search<src, des, graph, next, nextVisited, nextUnvisited>
 		: /* Happens when unvisited is empty. 
 		 	But des should've been visited and resolved in an earlier step. */
-			"should be unreachable";
+			never;
 
 interface relax<unvisited extends NodeTable, current extends Node>
-	extends Fn<Edge> {
+	extends Fn<Edge, Node | nil> {
 	return: this["arg"] extends Edge<infer _, infer name, infer edgeLength>
 		? NodeTable.get<name, unvisited> extends infer neighbor extends Node
 			? plus<current["dist"], edgeLength> extends infer newDist extends number
@@ -78,7 +78,7 @@ declare namespace Node {
 		prev extends Node | null = null,
 	> = { name: name; dist: dist; prev: prev };
 
-	export interface ofDist<dist extends number> extends Fn<string> {
+	export interface ofDist<dist extends number> extends Fn<string, Node> {
 		return: of<this["arg"], dist>;
 	}
 
@@ -115,11 +115,11 @@ declare namespace NodeTable {
 		table
 	>;
 
-	export interface update extends Fn<[NodeTable, Node]> {
+	export interface update extends Fn<[NodeTable, Node], NodeTable> {
 		return: add<this["arg"][1], this["arg"][0]>;
 	}
 
-	export interface remove<node extends Node> extends Fn<NodeTable> {
+	export interface remove<node extends Node> extends Fn<NodeTable, NodeTable> {
 		return: Table.remove<node["name"], this["arg"]>;
 	}
 
@@ -128,7 +128,7 @@ declare namespace NodeTable {
 
 	export type ofList = List.foldLeft<update, empty>;
 
-	export interface removeMin extends Fn<NodeTable> {
+	export interface removeMin extends Fn<NodeTable, [Node, NodeTable] | nil> {
 		return: List.min<
 			Node.ltFn,
 			Table.values<this["arg"]>

@@ -1,10 +1,15 @@
 export interface Fn<Arg = unknown, Return = unknown> {
 	arg: Arg;
-	return: Return;
+	_returnType: Return;
+	return: unknown;
 }
 
 export namespace Fn {
-	export type call<f extends Fn, arg> = (f & { arg: arg })["return"];
+	export type call<f extends Fn, arg> = unknown extends f["_returnType"]
+		? (f & { arg: arg })["return"]
+		: (f & { arg: arg })["return"] extends infer res extends f["_returnType"]
+			? res
+			: never;
 
 	export type pipe<acc, fs extends Fn[]> = fs extends [
 		infer head extends Fn,

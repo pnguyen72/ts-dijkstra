@@ -59,9 +59,9 @@ type filterMapImpl<f extends Fn, l> = l extends [infer head, ...infer tail]
 		: never
 	: [];
 
-type mapImpl<f extends Fn, l> = l extends [infer head, ...infer tail]
-	? [Fn.call<f, head>, ...mapImpl<f, tail>]
-	: [];
+type mapImpl<f extends Fn, l> = {
+	[k in keyof l]: Fn.call<f, l[k]>;
+};
 interface mapFn<f extends Fn> extends Fn {
 	return: mapImpl<f, this["arg"]>;
 }

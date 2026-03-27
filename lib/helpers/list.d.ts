@@ -2,11 +2,11 @@ import type { Fn } from "./function.d.ts";
 import type { nil } from "./nil";
 
 export namespace List {
-	export type foldLeft<
+	export type fold<
 		f extends Fn<[unknown, unknown]>,
 		acc extends f["arg"][0],
 		l = "curry",
-	> = l extends "curry" ? foldLeftFn<f, acc> : foldLeftImpl<f, acc, l>;
+	> = l extends "curry" ? foldFn<f, acc> : foldImpl<f, acc, l>;
 
 	export type min<
 		lt extends Fn<[unknown, unknown], boolean>,
@@ -40,12 +40,12 @@ export namespace List {
 		: acc;
 }
 
-type foldLeftImpl<f extends Fn, acc, l> = l extends [infer head, ...infer tail]
-	? foldLeftImpl<f, Fn.call<f, [acc, head]>, tail>
+type foldImpl<f extends Fn, acc, l> = l extends [infer head, ...infer tail]
+	? foldImpl<f, Fn.call<f, [acc, head]>, tail>
 	: acc;
-interface foldLeftFn<f extends Fn<[unknown, unknown]>, acc extends f["arg"][0]>
+interface foldFn<f extends Fn<[unknown, unknown]>, acc extends f["arg"][0]>
 	extends Fn {
-	return: foldLeftImpl<f, acc, this["arg"]>;
+	return: foldImpl<f, acc, this["arg"]>;
 }
 
 type takeMin<lt extends Fn<[unknown, unknown], boolean>, a, b> =

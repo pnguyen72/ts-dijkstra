@@ -32,7 +32,7 @@ type search<
 				Graph.edges<current["name"], g>,
 				[
 					List.filterMap<relax<remaining, current>>,
-					List.foldLeft<NodeQueue.update, remaining>,
+					List.fold<NodeQueue.update, remaining>,
 					NodeQueue.popMin,
 				]
 			> extends [infer next extends Node, infer nextRemaining extends NodeQueue]
@@ -87,7 +87,7 @@ declare namespace Node {
 
 type NodeQueue = Table;
 declare namespace NodeQueue {
-	export type ofList = List.foldLeft<update, Table.empty>;
+	export type ofList = List.fold<update, Table.empty>;
 
 	export interface update extends Fn<[NodeQueue, Node], NodeQueue> {
 		return: Table.update<

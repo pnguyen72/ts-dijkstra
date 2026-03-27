@@ -49,7 +49,7 @@ interface exploreFn<g extends Graph> extends Fn<[unknown, string]> {
 	]
 		? NodeSet.mem<node, visited> extends true
 			? ExpState<visited, exitOrder>
-			: List.foldLeft<
+			: List.fold<
 						exploreFn<g>,
 						ExpState<NodeSet.add<node, visited>, exitOrder>,
 						Graph.neighbors<node, g>

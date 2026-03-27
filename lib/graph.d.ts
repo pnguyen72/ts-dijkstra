@@ -9,6 +9,11 @@ export type Edge<
 	len extends number = number,
 > = { src: src; des: des; len: len };
 declare namespace Edge {
+	export type reverse<e extends Edge> =
+		e extends Edge<infer src, infer des, infer len>
+			? Edge<des, src, len>
+			: never;
+
 	export interface des extends Fn<Edge, string> {
 		return: this["arg"]["des"];
 	}
@@ -33,11 +38,8 @@ export namespace Graph {
 			? List.flatten<edgeLists>
 			: never,
 		acc extends Graph = Table.empty,
-	> = edges extends [
-		Edge<infer src, infer des, infer len>,
-		...infer otherEdges extends Edge[],
-	]
-		? transpose<g, otherEdges, addEdge<Edge<des, src, len>, acc>>
+	> = edges extends [infer head extends Edge, ...infer tail extends Edge[]]
+		? transpose<g, tail, addEdge<Edge.reverse<head>, acc>>
 		: acc;
 
 	export type edges<v extends string, g extends Graph> =
